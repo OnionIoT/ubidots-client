@@ -44,7 +44,7 @@ int curlPost (char* url, char* postData) {
 		res = curl_easy_perform(curl);
 
 		// Check for errors
-		printf(">> Post Sent via url: %s", url);
+		printf(">> Post Sent via url: %s\n", url);
 
 		if (res != CURLE_OK) {
 			printf("Error: %s\n", curl_easy_strerror(res));
@@ -58,6 +58,43 @@ int curlPost (char* url, char* postData) {
 		if (headers != NULL) {
 			curl_slist_free_all(headers);
 		}
+		curl_easy_cleanup(curl);
+	}
+	return status;
+}
+
+int curlGet (char* url, char* getVariable) {
+	int status = EXIT_SUCCESS;
+	CURL *curl;
+	CURLcode res;
+	struct curl_slist *headers = NULL;
+
+	printf(">> Sending GET to %s, get variable: %s\n", url, getVariable);
+
+	// Get the handle
+	curl = curl_easy_init();
+
+	if(curl) {
+		// Set the URL that will receive the GET
+		curl_easy_setopt(curl, CURLOPT_URL, url);
+
+		// Specify the GET data
+		curl_easy_setopt(curl, CURLOPT_HTTPGET, getVariable);
+
+		// Direct the function to print the result
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, writeData);
+
+		// Perform the request, res will get the return code
+		res = curl_easy_perform(curl);
+
+		if (res != CURLE_OK) {
+			printf("Error: %s\n", curl_easy_strerror(res));
+			status = EXIT_FAILURE;
+		}
+		else {
+			status = EXIT_SUCCESS;
+		}
+
 		curl_easy_cleanup(curl);
 	}
 	return status;
