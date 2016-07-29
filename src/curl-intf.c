@@ -44,7 +44,7 @@ int curlPost (char* url, char* postData) {
 		res = curl_easy_perform(curl);
 
 		// Check for errors
-		printf(">> Post Sent via url: %s\n", url);
+		// printf(">> Post Sent via url: %s\n", url);
 
 		if (res != CURLE_OK) {
 			printf("Error: %s\n", curl_easy_strerror(res));
@@ -69,7 +69,7 @@ int curlGet (char* url, char* getVariable) {
 	CURLcode res;
 	struct curl_slist *headers = NULL;
 
-	printf(">> Sending GET to %s, get variable: %s\n", url, getVariable);
+	// printf(">> Sending GET to %s, get variable: %s\n", url, getVariable);
 
 	// Get the handle
 	curl = curl_easy_init();
@@ -94,8 +94,78 @@ int curlGet (char* url, char* getVariable) {
 		else {
 			status = EXIT_SUCCESS;
 		}
-
 		curl_easy_cleanup(curl);
 	}
 	return status;
+}
+
+size_t writeData(void *ptr, size_t size, size_t nmemb, void *userdata) {
+	int status;
+	size_t realSize = size *nmemb;
+
+	// printf("%s\n", ptr);
+
+	if (isJson(ptr, realSize) == 1) {
+		status = writeJsonData(ptr);
+	}
+	else {
+		status = writeMultipleJsonData(ptr);
+	}
+	return realSize;
+}
+
+int writeJsonData (char* receivedData) {
+	int status = EXIT_FAILURE;
+	json_object *jObj;
+	json_object *innerjObj;
+	json_object *returnValueNode;
+	char *returnValue;
+	int i;
+
+	jObj = json_tokener_parse(receivedData);
+	innerjObj = json_object_object_get(jObj, "last_value");
+	returnValueNode = json_object_object_get(innerjObj, "value");
+	returnValue = json_object_get_string(returnValueNode);
+	printf("%s\n", returnValue);
+	
+}
+
+int writeMultipleJsonData (char* receivedData) {
+	// This value is just in one object called "value" (ignore last_value_)
+
+
+	// int status = EXIT_FAILURE;
+	// json_object *jObj;
+	// struct array_list *jObjArray;
+	// json_object *innerjObj;
+	// json_object *returnValueNode;
+	// int arrayLength;
+	// char *returnValue;
+	// int i;
+
+	// printf("multiple json data\n");
+	// jObj = json_tokener_parse(receivedData);
+	// printf("finished tokener parse\n");
+	// jObjArray = json_object_get_array(jObj);
+	// printf("got the array\n");
+	// printf(" length is %d\n", jObjArray->length);
+
+
+	// arrayLength = json_object_array_length(jObj);
+	// printf("array length: %s\n", arrayLength);
+
+
+	// for (i = 0; i < (json_object_array_length - 1); i++) {
+	// 	returnValue = json_object_get_string(json_object_object_get(json_object_object_get((json_object_get_array(jObj)[i]), "last_value"), "value"));
+	// 	printf("%s\n", returnValue);
+	// }
+	return 0;
+}
+
+int isJson (char* text, int size) {
+	int bJson 	= 0;
+	if (size > 0 && text[0] == '{' && text[size-1] == '}') {
+		bJson 	= 1;
+	}
+	return bJson;
 }

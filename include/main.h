@@ -6,10 +6,8 @@
 #include <stdio.h>
 #include <stdarg.h>
 #include <unistd.h>
-
-
-#define STRING_LENGTH			256
-#define buffer_length			1024
+#include <ubidots-types.h>
+#include <curl-intf.h>
 
 
 // macros for communicating with ubidots
