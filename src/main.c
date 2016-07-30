@@ -3,6 +3,7 @@
 
 void usage(const char* progName) {
 	printf("ubidots-client: interface with the ubidots server\n");
+	// clement: add instructions on using the set and get commands
 }
 
 int main(int argc, char** argv) {
