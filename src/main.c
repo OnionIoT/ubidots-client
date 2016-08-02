@@ -3,7 +3,10 @@
 
 void usage(const char* progName) {
 	printf("ubidots-client: interface with the ubidots server\n");
-	// clement: add instructions on using the set and get commands
+	printf("To use:\nFlags -d and -t precede the data source label and your token, respectively. ");
+	printf("'get' the variable name, 'set' the object containing the variable name and the desired value.\n");
+	printf("For example: \"ubidots -t <myToken> -d <myDataSourceLabel> get myVariable\"\n");
+	printf("For example: \"ubidots -t <myToken> -d <myDataSourceLabel> set '{\"myVariable\":100}'\"\n");
 }
 
 int main(int argc, char** argv) {
@@ -65,19 +68,20 @@ int main(int argc, char** argv) {
 	if (command == UBIDOT_COMMAND_SET) {
 		sprintf(url, UBIDOTS_POST_URL, UBIDOTS_URL, data_source, token);
 		curlPost(url, data);
+		printf("Done!\n");
 	}
 	else if (command == UBIDOT_COMMAND_GET) {
 		sprintf(url, UBIDOTS_GET_URL, UBIDOTS_URL, data_source, data, token);
 		printf("Last %s value: ", data);
 		curlGet(url, data);
+		printf("Done!\n");
 	}
 	else if (command == UBIDOT_COMMAND_GET_ALL) {
 		sprintf(url, UBIDOTS_GET_ALL_URL, UBIDOTS_URL, data_source, data, token);
 		printf("%s values: ", data);
 		curlGet(url, data);
+		printf("Done!\n");
 	}
-
-	printf("Done!\n");
 
 	// close the curl guy
 	curlCleanup();
@@ -85,8 +89,6 @@ int main(int argc, char** argv) {
 	// clean-up
 	free(data);
 	free(url);
-	// free(data_source);
-	// free(token);
 
 	return 0;
 }
